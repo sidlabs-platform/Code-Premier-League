@@ -1,0 +1,11 @@
+node_modules
+.next
+out
+coverage
+playwright-report
+test-results
+.data
+.impeccable/hook.cache.json
+*.log
+*.tsbuildinfo
+.DS_Store
