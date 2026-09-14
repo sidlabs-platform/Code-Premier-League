@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-14T19:05:00+05:30",
+  "title": "Design System: Code Premier League",
+  "extensions": {
+    "colorMeta": {
+      "command-coral": {
+        "role": "primary",
+        "displayName": "Command Coral",
+        "canonical": "#ff6047",
+        "tonalRamp": ["#43110b", "#702016", "#9f3021", "#ca3828", "#ff6047", "#ff8b78", "#ffb8ab", "#ffe7e2"]
+      },
+      "tally-lime": {
+        "role": "secondary",
+        "displayName": "Tally Lime",
+        "canonical": "#d8ff45",
+        "tonalRamp": ["#263000", "#465500", "#687d08", "#8fac17", "#b8dd2d", "#d8ff45", "#eaff9a", "#f8ffdf"]
+      },
+      "signal-cyan": {
+        "role": "tertiary",
+        "displayName": "Signal Cyan",
+        "canonical": "#68d9ff",
+        "tonalRamp": ["#002c3c", "#004c65", "#0b708e", "#2399bb", "#45bddf", "#68d9ff", "#a6eaff", "#e3f8ff"]
+      },
+      "console-ink": {
+        "role": "neutral",
+        "displayName": "Console Ink",
+        "canonical": "#0b1320",
+        "tonalRamp": ["#060a10", "#0b1320", "#111f31", "#1a2d44", "#33475f", "#62758d", "#aebbc9", "#eef2f5"]
+      },
+      "paper-field": {
+        "role": "neutral",
+        "displayName": "Paper Field",
+        "canonical": "#f5f1e8",
+        "tonalRamp": ["#292721", "#4e4a40", "#777165", "#a39c8f", "#c9c4b8", "#e3ded3", "#f5f1e8", "#fffdf6"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Broadcast Display",
+        "purpose": "Commands, player names, scores, and live auction numerals."
+      },
+      "body": {
+        "displayName": "Operational Body",
+        "purpose": "Instructions, explanations, and participant-facing copy."
+      },
+      "label": {
+        "displayName": "Instrument Label",
+        "purpose": "Compact uppercase metadata and state names."
+      }
+    },
+    "shadows": [
+      {
+        "name": "paper-lift",
+        "value": "6px 7px 0 rgba(11, 19, 32, 0.16)",
+        "purpose": "Large light forms and featured paper surfaces."
+      },
+      {
+        "name": "command-key",
+        "value": "3px 4px 0 #ca3828",
+        "purpose": "Primary action controls."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-response",
+        "value": "140ms ease",
+        "purpose": "Short physical lift and press response for command keys."
+      },
+      {
+        "name": "waiting-pulse",
+        "value": "2s ease-out infinite",
+        "purpose": "Single waiting-room broadcast pulse; disabled for reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "rail-stack",
+        "value": "1100px"
+      },
+      {
+        "name": "mobile-console",
+        "value": "760px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Command",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The decisive action key for joining, bidding, starting, or publishing.",
+      "html": "<button class=\"ds-command\">JOIN AUCTION</button>",
+      "css": ".ds-command{min-height:44px;padding:11px 16px;border:1px solid #ff6047;border-radius:5px;background:#ff6047;color:#0b1320;box-shadow:3px 4px 0 #ca3828;font:900 .75rem/1 'Arial Narrow',sans-serif;letter-spacing:.09em;text-transform:uppercase;transition:transform 140ms ease,box-shadow 140ms ease}.ds-command:hover{transform:translateY(-2px);box-shadow:4px 6px 0 #ca3828}.ds-command:focus-visible{outline:3px solid #68d9ff;outline-offset:3px}"
+    },
+    {
+      "name": "Secondary Command",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "A high-contrast alternate action on paper or ink.",
+      "html": "<button class=\"ds-secondary\">HOST A ROOM</button>",
+      "css": ".ds-secondary{min-height:44px;padding:11px 16px;border:1px solid #0b1320;border-radius:5px;background:#fffdf6;color:#0b1320;box-shadow:3px 4px 0 #0b1320;font:900 .75rem/1 'Arial Narrow',sans-serif;letter-spacing:.09em;text-transform:uppercase}.ds-secondary:hover{background:#d8ff45}.ds-secondary:focus-visible{outline:3px solid #68d9ff;outline-offset:3px}"
+    },
+    {
+      "name": "Console Input",
+      "kind": "input",
+      "description": "Paper field embedded in a dark host control panel.",
+      "html": "<label class=\"ds-field\">ROOM NAME<input value=\"Friday CPL Live\" /></label>",
+      "css": ".ds-field{display:grid;gap:7px;color:#9fb1c8;font:900 .75rem/1 'Arial Narrow',sans-serif;letter-spacing:.08em}.ds-field input{min-height:48px;padding:11px 13px;border:2px solid transparent;border-radius:3px;background:#fffdf6;color:#0b1320;font:600 1rem/1.4 system-ui}.ds-field input:focus{border-color:#d8ff45;outline:3px solid #68d9ff;outline-offset:2px}"
+    },
+    {
+      "name": "Auto-play Status",
+      "kind": "chip",
+      "description": "Persistent disclosure when automated teams control the room.",
+      "html": "<span class=\"ds-simulation\">● AUTO-PLAY</span>",
+      "css": ".ds-simulation{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;border:1px solid #0b1320;border-radius:999px;background:#d8ff45;color:#0b1320;font:900 .75rem/1 'Arial Narrow',sans-serif;letter-spacing:.08em;text-transform:uppercase}"
+    },
+    {
+      "name": "Console Panel",
+      "kind": "card",
+      "refersTo": "console-panel",
+      "description": "Flat operational surface divided from neighbors by hairline channels.",
+      "html": "<section class=\"ds-panel\"><h3>AUCTION COMMANDS</h3><p>One authoritative signal at a time.</p></section>",
+      "css": ".ds-panel{padding:16px;border:1px solid #33475f;border-radius:3px;background:#111f31;color:#f5f1e8}.ds-panel h3{margin:0 0 12px;padding-bottom:10px;border-bottom:1px solid #33475f;font:950 .82rem/1 'Arial Narrow',sans-serif;letter-spacing:.09em}.ds-panel p{margin:0;color:#9fb1c8;font:400 .9rem/1.5 system-ui}"
+    },
+    {
+      "name": "Auction Readout",
+      "kind": "custom",
+      "description": "Signature timer and highest-bid instrument with tabular numbers.",
+      "html": "<div class=\"ds-readout\"><span>HIGHEST BID</span><strong>8.5</strong><b>DEV CRORE</b></div>",
+      "css": ".ds-readout{display:grid;align-content:center;min-height:190px;padding:20px;border:1px solid #33475f;background:#111f31;color:#f5f1e8}.ds-readout span{color:#9fb1c8;font:900 .75rem/1 'Arial Narrow',sans-serif;letter-spacing:.09em}.ds-readout strong{color:#d8ff45;font:950 4.2rem/.9 'Arial Narrow',sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.04em}.ds-readout b{font:900 .75rem/1 'Arial Narrow',sans-serif}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Broadcast Control Room",
+    "overview": "Code Premier League uses the visual logic of a live production switcher: dense but ordered channels, obvious tally states, hard-working labels, and one dominant signal at a time. Light paper surfaces introduce and onboard; deep ink surfaces take over once play begins.",
+    "keyCharacteristics": [
+      "Condensed, uppercase display typography for commands and live state.",
+      "Matte ink panels divided by fine structural channels.",
+      "Coral for actions, lime for live state, cyan for identity, and gold for time.",
+      "Initials-based player geometry instead of photographic likenesses.",
+      "Compact mobile reflow that preserves the auction decision surface."
+    ],
+    "rules": [
+      {
+        "name": "The Signal Has Meaning Rule",
+        "body": "Coral means act, lime means live or leading, cyan means identify, and gold means time.",
+        "section": "colors"
+      },
+      {
+        "name": "The Numeral Leads Rule",
+        "body": "Auction time, bid value, room code, and final score always outrank their labels in size and contrast.",
+        "section": "typography"
+      },
+      {
+        "name": "The Console Stays Flat Rule",
+        "body": "Dark live-play panels do not use soft card shadows; border channels and tonal layers define hierarchy.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do give one live number clear visual authority on every auction surface.",
+      "Do preserve 44px minimum controls and the stacked mobile auction layout.",
+      "Do label every automated mode and simulated rating plainly.",
+      "Do use hairline channels to make dense information scannable.",
+      "Do keep score weights, penalties, and budget effects visible and explainable."
+    ],
+    "donts": [
+      "Don't replace the control-room grammar with generic rounded dashboard cards.",
+      "Don't use glow, glass, gradient text, or decorative neon as shorthand for gaming.",
+      "Don't use signal colors without their established semantic role.",
+      "Don't introduce real league marks, athlete likenesses, money imagery, or betting language.",
+      "Don't hide the active bid, countdown, budget, or final score behind hover-only interaction."
+    ]
+  }
+}
