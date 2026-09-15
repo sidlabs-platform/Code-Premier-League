@@ -6,6 +6,11 @@ import {
   joinSession,
 } from "@github/copilot-sdk/extension";
 import { renderDashboardHtml } from "./renderer.mjs";
+import {
+  fetchTextWithHostPolicy,
+  UnsafeAppUrlError,
+  validateConfiguredHost,
+} from "./safe-fetch.mjs";
 
 const servers = new Map();
 
@@ -35,6 +40,17 @@ function normalizeAppUrl(value) {
     throw new CanvasError(
       "invalid_app_url",
       "The hosted app URL must not include credentials.",
+    );
+  }
+
+  try {
+    validateConfiguredHost(parsed);
+  } catch (error) {
+    throw new CanvasError(
+      "invalid_app_url",
+      error instanceof Error
+        ? error.message
+        : "The hosted app URL must use a publicly routable host.",
     );
   }
 
@@ -93,27 +109,31 @@ function normalizeVoteSnapshot(payload) {
 async function fetchVoteSnapshot(appUrl) {
   let response;
   try {
-    response = await fetch(votesEndpoint(appUrl), {
-      cache: "no-store",
-      headers: { Accept: "application/json" },
-      redirect: "follow",
-      signal: AbortSignal.timeout(8_000),
-    });
+    response = await fetchTextWithHostPolicy(votesEndpoint(appUrl));
   } catch (error) {
+    if (error instanceof UnsafeAppUrlError) {
+      throw new Error(error.message);
+    }
+    const timedOut =
+      error instanceof Error &&
+      (error.name === "TimeoutError" ||
+        (error.name === "AbortError" &&
+          error.cause instanceof Error &&
+          error.cause.name === "TimeoutError"));
     throw new Error(
-      error instanceof Error && error.name === "TimeoutError"
+      timedOut
         ? "The hosted app did not respond within eight seconds."
         : "The hosted app could not be reached.",
     );
   }
 
-  if (!response.ok) {
+  if (response.status < 200 || response.status >= 300) {
     throw new Error(`The hosted app returned HTTP ${response.status}.`);
   }
 
   let payload;
   try {
-    payload = await response.json();
+    payload = JSON.parse(response.text);
   } catch {
     throw new Error("The hosted app did not return valid JSON.");
   }

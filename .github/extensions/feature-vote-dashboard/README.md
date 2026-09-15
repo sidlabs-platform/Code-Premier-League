@@ -17,6 +17,10 @@ The canvas also exposes:
 - `refresh_now` to fetch and return the latest totals immediately.
 - `set_app_url` to change the source for the current open dashboard.
 
-Only HTTP and HTTPS URLs without embedded credentials are accepted. The
-extension proxies vote data through a loopback-only server so hosted apps do
-not need additional CORS configuration for the canvas.
+Only HTTP and HTTPS URLs without embedded credentials are accepted. Hosted
+URLs must resolve exclusively to publicly routable IP addresses; private,
+link-local, reserved, and loopback targets are rejected. `localhost` is the
+explicit exception for local development, and redirects are limited and
+checked under the same policy before each request. The extension proxies vote
+data through a loopback-only server so hosted apps do not need additional CORS
+configuration for the canvas.

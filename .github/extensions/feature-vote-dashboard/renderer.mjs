@@ -513,6 +513,8 @@ export function renderDashboardHtml({ appUrl, instanceId, token }) {
       const applyButton = document.getElementById("apply-button");
       const number = new Intl.NumberFormat();
       let hasSnapshot = false;
+      let lastSyncedAppUrl = config.appUrl;
+      let refreshPromise;
 
       function element(tag, className, text) {
         const node = document.createElement(tag);
@@ -562,7 +564,13 @@ export function renderDashboardHtml({ appUrl, instanceId, token }) {
           });
       }
 
-      async function loadVotes() {
+      function syncAppUrl(appUrl, preserveInput) {
+        lastSyncedAppUrl = appUrl;
+        sourceLabel.textContent = appUrl;
+        if (!preserveInput) input.value = appUrl;
+      }
+
+      async function refreshVotes() {
         try {
           const response = await fetch("/api/votes", { cache: "no-store" });
           const body = await response.json();
@@ -571,7 +579,7 @@ export function renderDashboardHtml({ appUrl, instanceId, token }) {
           }
           render(body.snapshot);
           hasSnapshot = true;
-          sourceLabel.textContent = body.appUrl;
+          syncAppUrl(body.appUrl, input.value !== lastSyncedAppUrl);
           syncTime.textContent = "Synced " + new Date().toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
@@ -594,8 +602,18 @@ export function renderDashboardHtml({ appUrl, instanceId, token }) {
         }
       }
 
+      function loadVotes() {
+        if (!refreshPromise) {
+          refreshPromise = refreshVotes().finally(() => {
+            refreshPromise = undefined;
+          });
+        }
+        return refreshPromise;
+      }
+
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
+        const submittedAppUrl = input.value;
         applyButton.disabled = true;
         status.textContent = "Updating source...";
         status.className = "status";
@@ -612,8 +630,8 @@ export function renderDashboardHtml({ appUrl, instanceId, token }) {
           if (!response.ok || !body.ok) {
             throw new Error(body.error || "The source URL could not be updated.");
           }
-          input.value = body.appUrl;
-          sourceLabel.textContent = body.appUrl;
+          if (refreshPromise) await refreshPromise;
+          syncAppUrl(body.appUrl, input.value !== submittedAppUrl);
           await loadVotes();
         } catch (error) {
           status.textContent = error instanceof Error ? error.message : "The source URL could not be updated.";
