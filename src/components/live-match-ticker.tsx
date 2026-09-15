@@ -10,29 +10,29 @@ const tickerTime = new Intl.DateTimeFormat("en", {
 });
 
 export function LiveMatchTicker({ events }: { events: readonly ActivityEvent[] }) {
-  const latestEvents = selectLiveMatchTickerEvents(events);
+  const latestEvents = selectLiveMatchTickerEvents(events, 3);
 
   return (
     <section className="live-match-ticker" aria-labelledby="live-ticker-title">
       <div className="live-ticker-heading">
         <Radio size={16} aria-hidden="true" />
-        <h2 id="live-ticker-title">Live match ticker</h2>
-        <span>{latestEvents.length} signals</span>
+        <h2 id="live-ticker-title">Spectator match center</h2>
+        <span>Last {latestEvents.length} calls</span>
       </div>
-      <ol
-        className="live-ticker-list"
+      <ul
+        className="live-ticker-grid"
         role="log"
         aria-atomic="false"
         aria-relevant="additions"
       >
         {latestEvents.length > 0 ? (
           latestEvents.map((event, index) => (
-            <li key={event.id} className={index === 0 ? "is-latest" : undefined}>
-              <time dateTime={new Date(event.createdAt).toISOString()}>
-                {tickerTime.format(event.createdAt)} UTC
-              </time>
-              <span>{event.type}</span>
+            <li key={event.id}>
+              <span>Signal {String(index + 1).padStart(2, "0")}</span>
               <p>{event.message}</p>
+              <time dateTime={new Date(event.createdAt).toISOString()}>
+                {event.type.toUpperCase()} · {tickerTime.format(event.createdAt)} UTC
+              </time>
             </li>
           ))
         ) : (
@@ -40,7 +40,7 @@ export function LiveMatchTicker({ events }: { events: readonly ActivityEvent[] }
             <p>Waiting for the first room signal.</p>
           </li>
         )}
-      </ol>
+      </ul>
     </section>
   );
 }
