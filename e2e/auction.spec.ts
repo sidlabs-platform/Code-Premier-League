@@ -1,22 +1,30 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 test("host, participants, bidding, sale, and results smoke flow", async ({
   browser,
 }) => {
   const reactLoopErrors: string[] = [];
-  const captureReactLoopError = (error: Error) => {
+  const captureReactLoopError = (message: string) => {
     if (
       /Maximum update depth exceeded|result of getSnapshot should be cached/i.test(
-        error.message,
+        message,
       )
     ) {
-      reactLoopErrors.push(error.message);
+      reactLoopErrors.push(message);
     }
+  };
+  const capturePageErrors = (page: Page) => {
+    page.on("pageerror", (error) => captureReactLoopError(error.message));
+    page.on("console", (message) => {
+      if (message.type() === "error") {
+        captureReactLoopError(message.text());
+      }
+    });
   };
 
   const hostContext = await browser.newContext();
   const host = await hostContext.newPage();
-  host.on("pageerror", captureReactLoopError);
+  capturePageErrors(host);
   await host.goto("/");
   await host.getByLabel("Room name").fill("Playwright CPL");
   await host.getByLabel("Dev quiz").uncheck();
@@ -27,7 +35,7 @@ test("host, participants, bidding, sale, and results smoke flow", async ({
   async function join(displayName: string, teamName: string) {
     const context = await browser.newContext();
     const page = await context.newPage();
-    page.on("pageerror", captureReactLoopError);
+    capturePageErrors(page);
     await page.goto(`/join?room=${roomCode}`);
     await page.getByLabel("Display name").fill(displayName);
     await page.getByLabel(/Team name/).fill(teamName);
