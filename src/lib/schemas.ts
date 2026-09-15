@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { FEATURE_VOTE_IDS } from "@/lib/feature-vote-options";
 
 export const createRoomSchema = z.object({
   name: z.string().trim().min(3).max(48),
@@ -6,6 +7,10 @@ export const createRoomSchema = z.object({
   bidIncrement: z.number().int().min(25).max(500),
   timerSeconds: z.number().int().min(5).max(45),
   quizEnabled: z.boolean(),
+});
+
+export const featureVoteSchema = z.object({
+  featureId: z.enum(FEATURE_VOTE_IDS),
 });
 
 const idempotencyKey = z.string().min(8).max(120);
