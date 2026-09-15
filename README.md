@@ -52,6 +52,130 @@ Auto-play uses four automated teams and deterministic, budget-aware bids. It is 
 | `/spectate/[roomCode]` | Read-only broadcast view |
 | `/results/[roomCode]` | Explainable leaderboard |
 | `/demo` | One-click local auto-play |
+| `/api/rooms/[roomCode]/public-feed` | Compact read-only feed for companion scoreboards |
+
+### Public room feed
+
+`GET /api/rooms/[roomCode]/public-feed` returns a stable projection for
+read-only companion displays. It intentionally omits credentials, participant
+IDs, bid history, quiz answers, scoring breakdowns, idempotency records, and all
+other internal room state. Responses always include `Cache-Control: no-store`.
+The ordered `teams` list sorts by `teamName`, then `displayName`, using the
+English locale. `version` increases when room state changes and can be used to
+skip unchanged renders. Reading the feed shares the normal room-snapshot timer
+tick, so an expired active auction may be finalized during a request.
+
+```ts
+type PublicRoomFeedResponse =
+  | {
+      ok: true;
+      feed: {
+        code: string;
+        name: string;
+        phase: "waiting" | "quiz" | "auction" | "results";
+        version: number;
+        serverTime: number;
+        currentAuction: {
+          player: {
+            id: string;
+            name: string;
+            callSign: string;
+            role: "BAT" | "BOWL" | "AR" | "WK";
+            overseas: boolean;
+            basePrice: number;
+          };
+          state: "idle" | "active" | "paused" | "sold" | "unsold";
+          endsAt: number | null;
+          pausedRemainingMs: number | null;
+          highestBid: number;
+          leadingTeam: {
+            displayName: string;
+            teamName: string;
+          } | null;
+        } | null;
+        teams: Array<{
+          displayName: string;
+          teamName: string;
+          squadSize: number;
+          balance: number;
+        }>;
+        latestEvent: {
+          type:
+            | "room"
+            | "participant"
+            | "quiz"
+            | "auction"
+            | "bid"
+            | "sold"
+            | "results"
+            | "simulation";
+          message: string;
+          createdAt: number;
+        } | null;
+        results: Array<{
+          rank: number;
+          displayName: string;
+          teamName: string;
+          score: number;
+        }> | null;
+      };
+    }
+  | { ok: false; error: string };
+```
+
+`results` is `null` until the host publishes the leaderboard. A representative
+active-auction response is:
+
+```json
+{
+  "ok": true,
+  "feed": {
+    "code": "CPL123",
+    "name": "Friday Engineering Auction",
+    "phase": "auction",
+    "version": 17,
+    "serverTime": 1789531664554,
+    "currentAuction": {
+      "player": {
+        "id": "player-01",
+        "name": "Demo Batter",
+        "callSign": "DB",
+        "role": "BAT",
+        "overseas": false,
+        "basePrice": 100
+      },
+      "state": "active",
+      "endsAt": 1789531680000,
+      "pausedRemainingMs": null,
+      "highestBid": 350,
+      "leadingTeam": {
+        "displayName": "Zara",
+        "teamName": "Zulu XI"
+      }
+    },
+    "teams": [
+      {
+        "displayName": "Ada",
+        "teamName": "Alpha XI",
+        "squadSize": 0,
+        "balance": 5000
+      },
+      {
+        "displayName": "Zara",
+        "teamName": "Zulu XI",
+        "squadSize": 1,
+        "balance": 4700
+      }
+    ],
+    "latestEvent": {
+      "type": "bid",
+      "message": "Zulu XI bid 350 DevLakh.",
+      "createdAt": 1789531664000
+    },
+    "results": null
+  }
+}
+```
 
 ## Local architecture
 
