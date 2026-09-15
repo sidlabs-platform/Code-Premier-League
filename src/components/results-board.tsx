@@ -1,5 +1,6 @@
-import { Award, Gauge, Info, Medal, Sparkles } from "lucide-react";
+import { Activity, Award, Gauge, Info, Medal, Sparkles } from "lucide-react";
 import { formatDevCoins } from "@/lib/currency";
+import { calculateSquadReadiness } from "@/lib/readiness";
 import type { RoomSnapshot, ScoringResult } from "@/lib/types";
 
 const metricLabels: Record<keyof ScoringResult["breakdown"], string> = {
@@ -66,6 +67,7 @@ export function ResultsBoard({
           const participant = snapshot.participants.find(
             (candidate) => candidate.id === result.participantId,
           );
+          const readiness = calculateSquadReadiness(result.breakdown);
           return (
             <details key={result.participantId} className="leaderboard-detail">
               <summary className="leaderboard-row" role="row">
@@ -85,6 +87,40 @@ export function ResultsBoard({
                 <strong role="cell">{result.score.toFixed(1)}</strong>
               </summary>
               <div className="score-explanation">
+                <section
+                  className="readiness-signal"
+                  aria-label={`${result.teamName} squad readiness`}
+                >
+                  <div className="readiness-score">
+                    <Activity size={20} aria-hidden="true" />
+                    <span>Squad readiness</span>
+                    <strong>{readiness.score}</strong>
+                    <small>{readiness.band}</small>
+                  </div>
+                  <p>
+                    A match-day signal weighted from team balance, current form,
+                    and pressure performance. Composition deductions are capped at
+                    25 points.
+                  </p>
+                  <dl>
+                    <div>
+                      <dt>Balance</dt>
+                      <dd>{result.breakdown.teamBalance.toFixed(1)}</dd>
+                    </div>
+                    <div>
+                      <dt>Form</dt>
+                      <dd>{result.breakdown.form.toFixed(1)}</dd>
+                    </div>
+                    <div>
+                      <dt>Pressure</dt>
+                      <dd>{result.breakdown.pressure.toFixed(1)}</dd>
+                    </div>
+                    <div>
+                      <dt>Deduction</dt>
+                      <dd>−{readiness.penaltyDeduction}</dd>
+                    </div>
+                  </dl>
+                </section>
                 <div className="score-metrics">
                   {(
                     [

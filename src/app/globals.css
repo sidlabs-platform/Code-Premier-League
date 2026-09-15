@@ -2507,6 +2507,92 @@ p {
   padding: 1.5rem;
 }
 
+.readiness-signal {
+  align-items: stretch;
+  background: var(--ink-3);
+  border: 1px solid var(--line);
+  display: grid;
+  gap: 1.5rem;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(180px, 0.6fr) minmax(240px, 1fr) minmax(360px, 1.5fr);
+  padding: 1rem;
+}
+
+.readiness-score {
+  align-items: center;
+  border-right: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  padding-right: 1.5rem;
+}
+
+.readiness-score svg {
+  color: var(--cyan);
+}
+
+.readiness-score span,
+.readiness-score small,
+.readiness-signal dt {
+  font-family: var(--display);
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.readiness-score strong {
+  color: var(--lime);
+  font-family: var(--display);
+  font-size: 3.8rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 950;
+  grid-column: 1 / -1;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  margin-top: 0.7rem;
+}
+
+.readiness-score small {
+  color: var(--lime);
+  grid-column: 1 / -1;
+  margin-top: 0.35rem;
+}
+
+.readiness-signal > p {
+  align-self: center;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 50ch;
+}
+
+.readiness-signal dl {
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 0;
+}
+
+.readiness-signal dl > div {
+  background: var(--ink-2);
+  display: grid;
+  padding: 0.75rem;
+}
+
+.readiness-signal dt {
+  color: var(--muted);
+}
+
+.readiness-signal dd {
+  align-self: end;
+  font-family: var(--display);
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+  margin: 0.5rem 0 0;
+}
+
 .score-metrics {
   grid-template-columns: 1fr 1fr;
 }
@@ -2965,6 +3051,20 @@ p {
   .score-explanation,
   .score-metrics {
     grid-template-columns: 1fr;
+  }
+
+  .readiness-signal {
+    grid-template-columns: 1fr;
+  }
+
+  .readiness-score {
+    border-bottom: 1px solid var(--line);
+    border-right: 0;
+    padding: 0 0 1rem;
+  }
+
+  .readiness-signal dl {
+    grid-template-columns: 1fr 1fr;
   }
 
   .results-hero {
