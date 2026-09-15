@@ -7,6 +7,7 @@ import {
   RadioTower,
   Trophy,
   UsersRound,
+  Vote,
 } from "lucide-react";
 import { AutoPlayPill, Brand, EducationalNotice } from "@/components/brand";
 import { CreateRoomForm } from "@/components/create-room-form";
@@ -18,13 +19,18 @@ export default function LandingPage() {
       <nav className="top-nav" aria-label="Primary navigation">
         <Brand />
         <div className="nav-actions">
+          <Link href="/vote" className="button button-primary vote-next-link">
+            <span className="vote-menu-dot" aria-hidden="true" />
+            <Vote size={17} aria-hidden="true" />
+            Vote next
+          </Link>
           <Link href="/join" className="button button-secondary">
             Join auction
           </Link>
-          <Link href="#host" className="button button-quiet">
+          <Link href="#host" className="button button-quiet nav-low-priority">
             Host a room
           </Link>
-          <Link href="/demo" className="button button-quiet">
+          <Link href="/demo" className="button button-quiet nav-low-priority">
             <Bot size={17} aria-hidden="true" />
             Auto-play
           </Link>
