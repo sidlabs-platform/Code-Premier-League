@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Eye, UsersRound } from "lucide-react";
 import { AuctionStage } from "@/components/auction-stage";
 import { AutoPlayPill, Brand, EducationalNotice } from "@/components/brand";
+import { LiveMatchTicker } from "@/components/live-match-ticker";
 import { ResultsBoard } from "@/components/results-board";
 import { ErrorBanner, LoadingBoard, Metric } from "@/components/ui";
 import { formatDevCoins } from "@/lib/currency";
@@ -45,6 +46,8 @@ export function SpectatorView({ roomCode }: { roomCode: string }) {
         />
         <Metric label="Sold" value={snapshot.soldPlayerIds.length} />
       </section>
+
+      <LiveMatchTicker events={snapshot.events} />
 
       {snapshot.phase === "results" ? (
         <ResultsBoard snapshot={snapshot} broadcast />
