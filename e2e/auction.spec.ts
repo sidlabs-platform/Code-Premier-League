@@ -3,8 +3,20 @@ import { expect, test } from "@playwright/test";
 test("host, participants, bidding, sale, and results smoke flow", async ({
   browser,
 }) => {
+  const reactLoopErrors: string[] = [];
+  const captureReactLoopError = (error: Error) => {
+    if (
+      /Maximum update depth exceeded|result of getSnapshot should be cached/i.test(
+        error.message,
+      )
+    ) {
+      reactLoopErrors.push(error.message);
+    }
+  };
+
   const hostContext = await browser.newContext();
   const host = await hostContext.newPage();
+  host.on("pageerror", captureReactLoopError);
   await host.goto("/");
   await host.getByLabel("Room name").fill("Playwright CPL");
   await host.getByLabel("Dev quiz").uncheck();
@@ -15,6 +27,7 @@ test("host, participants, bidding, sale, and results smoke flow", async ({
   async function join(displayName: string, teamName: string) {
     const context = await browser.newContext();
     const page = await context.newPage();
+    page.on("pageerror", captureReactLoopError);
     await page.goto(`/join?room=${roomCode}`);
     await page.getByLabel("Display name").fill(displayName);
     await page.getByLabel(/Team name/).fill(teamName);
@@ -62,6 +75,10 @@ test("host, participants, bidding, sale, and results smoke flow", async ({
 
   await host.getByTestId("force-close").click();
   await expect(beta.page.getByText("1/11", { exact: true })).toBeVisible();
+  expect(
+    reactLoopErrors,
+    "force-selling a player must not trigger a React render loop",
+  ).toEqual([]);
   await host.getByTestId("end-auction").click();
   await host.getByTestId("publish-results").click();
   await host.getByRole("link", { name: "Open results" }).click();
@@ -74,6 +91,10 @@ test("host, participants, bidding, sale, and results smoke flow", async ({
   await expect(
     leaderboard.locator("summary b", { hasText: "Beta Builders" }),
   ).toBeVisible();
+  expect(
+    reactLoopErrors,
+    "the completed auction flow must remain free of React render loops",
+  ).toEqual([]);
 
   await alpha.context.close();
   await beta.context.close();
