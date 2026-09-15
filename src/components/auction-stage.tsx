@@ -1,23 +1,10 @@
 "use client";
 
-import { useMemo, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Clock3, Pause, RadioTower } from "lucide-react";
 import { formatDevCoins } from "@/lib/currency";
 import { PlayerIdentity, PlayerStatsBoard } from "@/components/player";
 import type { RoomSnapshot } from "@/lib/types";
-
-function subscribeClock(onChange: () => void) {
-  const interval = window.setInterval(onChange, 100);
-  return () => window.clearInterval(interval);
-}
-
-function getClientClock() {
-  return Date.now();
-}
-
-function getServerClock() {
-  return 0;
-}
 
 export function AuctionStage({
   snapshot,
@@ -28,12 +15,19 @@ export function AuctionStage({
   serverOffset: number;
   compact?: boolean;
 }) {
-  const now = useSyncExternalStore(
-    subscribeClock,
-    getClientClock,
-    getServerClock,
-  );
   const auction = snapshot.auction;
+  const auctionState = auction?.state;
+  const [now, setNow] = useState(0);
+
+  useEffect(() => {
+    if (auctionState !== "active") return;
+
+    const updateClock = () => setNow(Date.now());
+    updateClock();
+    const interval = window.setInterval(updateClock, 100);
+    return () => window.clearInterval(interval);
+  }, [auctionState]);
+
   const player = snapshot.catalogue.find(
     (candidate) => candidate.id === auction?.playerId,
   );
