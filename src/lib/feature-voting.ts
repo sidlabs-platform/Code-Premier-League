@@ -12,6 +12,7 @@ import {
 
 const DATA_DIRECTORY = path.join(process.cwd(), ".data");
 const DATA_FILE = path.join(DATA_DIRECTORY, "cpl-feature-votes.json");
+const MAX_FEATURE_VOTERS = 10_000;
 
 const persistedFeatureVotesSchema = z.object({
   version: z.literal(1),
@@ -32,8 +33,13 @@ export class FeatureVoteStore {
   private votes = new Map<string, FeatureVoteId>();
   private updatedAt = Date.now();
   private operationQueue: Promise<void> = Promise.resolve();
+  private readonly maxVoters: number;
 
-  constructor(private readonly dataFile = DATA_FILE) {
+  constructor(
+    private readonly dataFile = DATA_FILE,
+    maxVoters = MAX_FEATURE_VOTERS,
+  ) {
+    this.maxVoters = Math.max(1, Math.floor(maxVoters));
     this.load();
   }
 
@@ -46,7 +52,14 @@ export class FeatureVoteStore {
       const parsed = persistedFeatureVotesSchema.parse(
         JSON.parse(readFileSync(this.dataFile, "utf8")),
       );
-      this.votes = new Map(Object.entries(parsed.votes));
+      const entries = Object.entries(parsed.votes);
+      const retainedEntries = entries.slice(-this.maxVoters);
+      if (retainedEntries.length < entries.length) {
+        console.warn(
+          `CPL retained the newest ${this.maxVoters} feature votes from local persistence.`,
+        );
+      }
+      this.votes = new Map(retainedEntries);
       this.updatedAt = parsed.updatedAt;
     } catch (error) {
       console.error("CPL could not load feature vote persistence.", error);
@@ -137,6 +150,12 @@ export class FeatureVoteStore {
       }
 
       const nextVotes = new Map(this.votes);
+      if (!nextVotes.has(voterId) && nextVotes.size >= this.maxVoters) {
+        const oldestVoterId = nextVotes.keys().next().value;
+        if (oldestVoterId) {
+          nextVotes.delete(oldestVoterId);
+        }
+      }
       nextVotes.set(voterId, featureId);
       const updatedAt = Date.now();
       await this.persist(nextVotes, updatedAt);

@@ -65,6 +65,63 @@ describe("feature vote store", () => {
     expect(snapshot.yourFeatureId).toBe("audience-reactions");
   });
 
+  it("bounds retained voters by evicting the oldest vote", async () => {
+    const store = new FeatureVoteStore(temporaryDataFile(), 2);
+    const oldestVoter = "2470ecb6-3705-46ca-81cb-295591358c6c";
+    const retainedVoter = "47903ef5-bdf0-43d9-b881-b55f37181bb2";
+    const newestVoter = "91f14d67-b3d8-48b4-9213-ec8de88d23a8";
+
+    await store.vote(oldestVoter, "bid-war-overlay");
+    await store.vote(retainedVoter, "post-match-awards");
+    const bounded = await store.vote(newestVoter, "audience-reactions");
+
+    expect(bounded.totalVotes).toBe(2);
+    expect(store.getSnapshot(oldestVoter).yourFeatureId).toBeNull();
+    expect(store.getSnapshot(retainedVoter).yourFeatureId).toBe(
+      "post-match-awards",
+    );
+    expect(store.getSnapshot(newestVoter).yourFeatureId).toBe(
+      "audience-reactions",
+    );
+
+    const returning = await store.vote(oldestVoter, "mystery-player-reveal");
+    expect(returning.totalVotes).toBe(2);
+    expect(returning.yourFeatureId).toBe("mystery-player-reveal");
+    expect(store.getSnapshot(retainedVoter).yourFeatureId).toBeNull();
+  });
+
+  it("retains only the newest configured votes when loading", () => {
+    const dataFile = temporaryDataFile();
+    const firstVoter = "1374debd-777b-43d2-ad1c-459fd6d43089";
+    const secondVoter = "d2306556-5dd3-439a-b3f4-986bbdc03711";
+    const thirdVoter = "12983181-9a2e-45f6-882b-1caaee8f7542";
+    writeFileSync(
+      dataFile,
+      JSON.stringify({
+        version: 1,
+        updatedAt: 123,
+        votes: {
+          [firstVoter]: "bid-war-overlay",
+          [secondVoter]: "squad-strategy-advisor",
+          [thirdVoter]: "mystery-player-reveal",
+        },
+      }),
+      "utf8",
+    );
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+
+    const store = new FeatureVoteStore(dataFile, 2);
+
+    expect(store.getSnapshot(firstVoter).yourFeatureId).toBeNull();
+    expect(store.getSnapshot(secondVoter).yourFeatureId).toBe(
+      "squad-strategy-advisor",
+    );
+    expect(store.getSnapshot(thirdVoter).yourFeatureId).toBe(
+      "mystery-player-reveal",
+    );
+    expect(store.getSnapshot(thirdVoter).totalVotes).toBe(2);
+  });
+
   it("starts clean when persisted vote data is corrupt", () => {
     const dataFile = temporaryDataFile();
     writeFileSync(dataFile, "{not-json", "utf8");

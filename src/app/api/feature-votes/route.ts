@@ -26,6 +26,15 @@ function voterIdentity(request: NextRequest): {
   return { voterId: randomUUID(), isNew: true };
 }
 
+function isJsonRequest(request: NextRequest): boolean {
+  const mediaType = request.headers
+    .get("content-type")
+    ?.split(";", 1)[0]
+    ?.trim()
+    .toLowerCase();
+  return mediaType === "application/json";
+}
+
 function responseWithIdentity(
   body: object,
   status: number,
@@ -62,7 +71,7 @@ export async function POST(request: NextRequest) {
   const { voterId, isNew } = voterIdentity(request);
 
   try {
-    if (!request.headers.get("content-type")?.startsWith("application/json")) {
+    if (!isJsonRequest(request)) {
       throw new FeatureVoteError("Votes must be submitted as JSON.", 415);
     }
     const input = featureVoteSchema.parse(await request.json());

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Check, LoaderCircle, RefreshCw, Vote } from "lucide-react";
 import { Button, ErrorBanner } from "@/components/ui";
 import type {
@@ -30,7 +30,7 @@ export function FeatureVoteBoard() {
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState("");
 
-  async function refresh() {
+  const refresh = useCallback(async () => {
     setError(null);
     try {
       const response = await fetch("/api/feature-votes", { cache: "no-store" });
@@ -44,11 +44,11 @@ export function FeatureVoteBoard() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     void refresh();
-  }, []);
+  }, [refresh]);
 
   async function submitVote(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
