@@ -2217,6 +2217,110 @@ p {
   grid-template-columns: repeat(4, 1fr);
 }
 
+.live-match-ticker {
+  align-items: stretch;
+  background: var(--ink-2);
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: minmax(190px, 0.22fr) minmax(0, 1fr);
+}
+
+.live-ticker-heading {
+  align-content: center;
+  border-right: 1px solid var(--line);
+  display: grid;
+  gap: 0.35rem 0.55rem;
+  grid-template-columns: auto 1fr;
+  padding: 0.85rem 1rem;
+}
+
+.live-ticker-heading svg {
+  color: var(--lime);
+}
+
+.live-ticker-heading h2 {
+  font-family: var(--display);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.live-ticker-heading > span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  grid-column: 1 / -1;
+}
+
+.live-ticker-list,
+.live-ticker-grid {
+  display: grid;
+  list-style: none;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+
+.live-ticker-list {
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
+}
+
+.live-ticker-list li,
+.live-ticker-grid li {
+  border-right: 1px solid var(--line);
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  padding: 0.75rem;
+}
+
+.live-ticker-list li:last-child,
+.live-ticker-grid li:last-child {
+  border-right: 0;
+}
+
+.live-ticker-list li.is-latest {
+  background: var(--ink-3);
+}
+
+.live-ticker-list time,
+.live-ticker-grid time {
+  color: var(--gold);
+  font-family: var(--display);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+}
+
+.live-ticker-list li > span,
+.live-ticker-grid li > span {
+  color: var(--cyan);
+  font-family: var(--display);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.live-ticker-list p,
+.live-ticker-grid p {
+  font-size: 0.72rem;
+  line-height: 1.35;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.live-ticker-empty {
+  align-content: center;
+  color: var(--muted);
+  grid-column: 1 / -1;
+}
+
+.live-ticker-grid {
+  grid-template-columns: repeat(3, minmax(190px, 1fr));
+}
+
 .broadcast-grid {
   display: grid;
   gap: 1rem;
@@ -2615,6 +2719,28 @@ p {
     grid-template-columns: 1fr;
   }
 
+  .live-match-ticker {
+    grid-template-columns: 160px minmax(0, 1fr);
+  }
+
+  .live-ticker-list {
+    grid-template-columns: repeat(3, minmax(160px, 1fr));
+    overflow: hidden;
+  }
+
+  .live-ticker-list li:nth-child(n + 4) {
+    display: none;
+  }
+
+  .live-ticker-grid {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+    overflow: hidden;
+  }
+
+  .live-ticker-grid li:nth-child(n + 3) {
+    display: none;
+  }
+
   .broadcast-leaders {
     min-height: auto;
   }
@@ -2905,6 +3031,37 @@ p {
 
   .broadcast-grid {
     padding: 0.65rem;
+  }
+
+  .live-match-ticker {
+    grid-template-columns: 1fr;
+  }
+
+  .live-ticker-heading {
+    border-bottom: 1px solid var(--line);
+    border-right: 0;
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .live-ticker-heading > span {
+    grid-column: auto;
+    text-align: right;
+  }
+
+  .live-ticker-list,
+  .live-ticker-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .live-ticker-list li,
+  .live-ticker-grid li {
+    border-bottom: 1px solid var(--line);
+    border-right: 0;
+  }
+
+  .live-ticker-list li:nth-child(n + 3),
+  .live-ticker-grid li:nth-child(n + 3) {
+    display: none;
   }
 
   .broadcast-grid .auction-stage {
