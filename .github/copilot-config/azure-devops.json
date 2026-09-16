@@ -1,0 +1,10 @@
+{
+  "canvasId": "azure-devops",
+  "extensionId": "plugin:azure-devops-copilot-plugin:azure-devops",
+  "connection": {
+    "organization": "sid-msft",
+    "project": "agentic-webinar",
+    "repositoryId": "agentic-webinar"
+  },
+  "notes": "Azure DevOps org: sid-msft. Project: agentic-webinar. The canvas open input schema does NOT accept a bare organization+project pair, so this is not passed as `input`; open the canvas with empty input and it resolves this connection from the pinned record at ~/.copilot/azure-devops-canvas/connection.json. Pass `input` only for a deep link (pullRequestUrl/workItemUrl, or organization+project+pullRequestId/workItemId). The previously pinned project `Tic-tac-toe` no longer exists and was replaced."
+}
