@@ -233,16 +233,16 @@ describe("public room feed projection", () => {
       },
       teams: [
         {
-          displayName: "Ada",
-          teamName: "Alpha XI",
-          squadSize: 0,
-          balance: 5_000,
-        },
-        {
           displayName: "Zara",
           teamName: "Zulu XI",
           squadSize: 1,
           balance: 4_700,
+        },
+        {
+          displayName: "Ada",
+          teamName: "Alpha XI",
+          squadSize: 0,
+          balance: 5_000,
         },
       ],
       latestEvent: {
@@ -280,6 +280,44 @@ describe("public room feed projection", () => {
       "tokenHash",
     ]);
     expect(collectKeys(feed).filter((key) => forbiddenKeys.has(key))).toEqual([]);
+    expect(Object.keys(feed).sort()).toEqual([
+      "code",
+      "currentAuction",
+      "latestEvent",
+      "name",
+      "phase",
+      "results",
+      "serverTime",
+      "teams",
+      "version",
+    ]);
+    expect(Object.keys(feed.currentAuction ?? {}).sort()).toEqual([
+      "endsAt",
+      "highestBid",
+      "leadingTeam",
+      "pausedRemainingMs",
+      "player",
+      "state",
+    ]);
+    expect(Object.keys(feed.currentAuction?.player ?? {}).sort()).toEqual([
+      "basePrice",
+      "callSign",
+      "id",
+      "name",
+      "overseas",
+      "role",
+    ]);
+    expect(Object.keys(feed.teams[0] ?? {}).sort()).toEqual([
+      "balance",
+      "displayName",
+      "squadSize",
+      "teamName",
+    ]);
+    expect(Object.keys(feed.latestEvent ?? {}).sort()).toEqual([
+      "createdAt",
+      "message",
+      "type",
+    ]);
   });
 
   it("keeps unpublished results hidden and publishes only compact ranked rows", () => {
@@ -303,6 +341,49 @@ describe("public room feed projection", () => {
         score: 82.4,
       },
     ]);
+  });
+
+  it("preserves an empty published leaderboard as an empty list", () => {
+    expect(
+      projectPublicRoomFeed(
+        createSnapshot({
+          participants: [],
+          results: [],
+          resultsPublished: true,
+          phase: "results",
+          auction: null,
+          events: [],
+        }),
+      ),
+    ).toMatchObject({
+      phase: "results",
+      currentAuction: null,
+      teams: [],
+      latestEvent: null,
+      results: [],
+    });
+  });
+
+  it("ignores unknown event types when selecting the latest public event", () => {
+    const feed = projectPublicRoomFeed(
+      createSnapshot({
+        events: [
+          ...createSnapshot().events,
+          {
+            id: "private-event",
+            type: "private-internal-event" as never,
+            message: "private event",
+            createdAt: 1_700_000_011_000,
+          },
+        ],
+      }),
+    );
+
+    expect(feed.latestEvent).toEqual({
+      type: "bid",
+      message: "Zulu XI bid 350 DevLakh.",
+      createdAt: 1_700_000_010_000,
+    });
   });
 
   it("uses null for auctions without a public player or resolvable leader", () => {

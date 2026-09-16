@@ -59,6 +59,24 @@ export type PublicRoomFeedResponse =
   | { ok: true; feed: PublicRoomFeed }
   | { ok: false; error: string };
 
+export const publicFeedCorsHeaders = {
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Methods": "GET, OPTIONS",
+  "Access-Control-Allow-Origin": "*",
+  "Cache-Control": "no-store",
+};
+
+const PUBLIC_EVENT_TYPES = new Set<ActivityEvent["type"]>([
+  "auction",
+  "bid",
+  "participant",
+  "quiz",
+  "results",
+  "room",
+  "simulation",
+  "sold",
+]);
+
 const textCollator = new Intl.Collator("en", {
   sensitivity: "base",
   usage: "sort",
@@ -81,6 +99,8 @@ export function projectPublicRoomFeed(snapshot: RoomSnapshot): PublicRoomFeed {
     }))
     .sort(
       (left, right) =>
+        right.squadSize - left.squadSize ||
+        right.balance - left.balance ||
         compareText(left.teamName, right.teamName) ||
         compareText(left.displayName, right.displayName),
     );
@@ -120,7 +140,9 @@ export function projectPublicRoomFeed(snapshot: RoomSnapshot): PublicRoomFeed {
         }
       : null;
 
-  const latestEvent = snapshot.events.at(-1);
+  const latestEvent = [...snapshot.events]
+    .reverse()
+    .find((event) => PUBLIC_EVENT_TYPES.has(event.type));
 
   return {
     code: snapshot.code,
