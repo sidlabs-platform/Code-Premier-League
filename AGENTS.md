@@ -14,3 +14,20 @@ When opening the "Jira Sprint Dashboard" canvas (`canvasId: jira-sprint-dashboar
 `extensionId: plugin:jira-sprint-dashboard-canvas:jira-sprint-dashboard-canvas`) for this repo,
 use the saved settings in `.github/copilot-config/jira-sprint-dashboard.json` as the `input`
 instead of asking the user again, unless they request a different Jira site or project.
+
+## Azure DevOps canvas defaults
+
+When opening the "Azure DevOps" canvas (`canvasId: azure-devops`,
+`extensionId: plugin:azure-devops-copilot-plugin:azure-devops`) for this repo, the intended
+connection is the one recorded in `.github/copilot-config/azure-devops.json`
+(org `sid-msft`, project `agentic-webinar`). Do not ask the user to pick a project again
+unless they request a different org or project.
+
+This canvas does not take the connection as `input`: its schema accepts only empty input or a
+deep link (`pullRequestUrl` / `workItemUrl`, or organization + project + `pullRequestId` /
+`workItemId`). Open it with empty input and it resolves the connection pinned in
+`~/.copilot/azure-devops-canvas/connection.json`.
+
+If the canvas ever shows a stale or missing project, fix that record rather than the `input`:
+set **both** `default` and `lastUsed` to the desired connection. `lastUsed` is resolved ahead of
+`default`, so pinning a default alone will not displace a stale `lastUsed` entry.
