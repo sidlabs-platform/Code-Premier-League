@@ -1933,6 +1933,86 @@ p {
   color: var(--lime);
 }
 
+.strategy-advisor {
+  border: 1px solid var(--line);
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.7rem;
+}
+
+.strategy-advisor-role,
+.strategy-advisor-overseas,
+.strategy-advisor-budget {
+  border-color: var(--gold);
+}
+
+.strategy-advisor-complete {
+  border-color: var(--lime);
+}
+
+.strategy-primary {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.55rem;
+}
+
+.strategy-primary svg {
+  color: var(--cyan);
+  flex: 0 0 auto;
+  margin-top: 0.1rem;
+}
+
+.strategy-primary span {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.strategy-primary small,
+.strategy-coverage small {
+  color: var(--muted);
+  font-family: var(--display);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.strategy-primary strong {
+  font-size: 0.8rem;
+  line-height: 1.25;
+}
+
+.strategy-coverage,
+.strategy-runway {
+  display: grid;
+  gap: 0.35rem;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.strategy-coverage span,
+.strategy-runway span {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.strategy-coverage strong,
+.strategy-runway strong {
+  color: var(--paper);
+  font-family: var(--display);
+  font-size: 0.72rem;
+}
+
+.strategy-runway {
+  border-top: 1px solid var(--line);
+  grid-template-columns: repeat(2, 1fr);
+  padding-top: 0.55rem;
+}
+
+.strategy-runway span {
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+
 .squad-list {
   display: grid;
   gap: 0.45rem;
@@ -2826,6 +2906,15 @@ p {
   .qr-frame svg {
     height: 82px;
     width: 82px;
+  }
+
+  .strategy-coverage {
+    gap: 0.2rem;
+  }
+
+  .strategy-coverage strong,
+  .strategy-runway strong {
+    font-size: 0.68rem;
   }
 
   .auction-stage {

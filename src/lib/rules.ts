@@ -1,4 +1,5 @@
 import { PLAYER_CATALOGUE } from "@/lib/seed";
+import { getSquadStrategy } from "@/lib/strategy";
 import type { Participant, RoomState } from "@/lib/types";
 
 export type BidDecision =
@@ -51,10 +52,6 @@ export function validateBid(
   if (amount > participant.balance) {
     return { ok: false, reason: "That bid exceeds your available budget.", minimumBid: required };
   }
-  if (participant.squad.length >= room.config.squadSize) {
-    return { ok: false, reason: "Your squad is already full.", minimumBid: required };
-  }
-
   const player = PLAYER_CATALOGUE.find(
     (candidate) => candidate.id === room.auction?.playerId,
   );
@@ -62,10 +59,15 @@ export function validateBid(
     return { ok: false, reason: "The active player is unavailable.", minimumBid: required };
   }
 
-  const overseasCount = participant.squad.filter((entry) => {
-    return PLAYER_CATALOGUE.find((candidate) => candidate.id === entry.playerId)?.overseas;
-  }).length;
-  if (player.overseas && overseasCount >= room.config.maxOverseas) {
+  const strategy = getSquadStrategy(participant, room.config, PLAYER_CATALOGUE, {
+    activePlayer: player,
+    minimumBid: required,
+  });
+  if (strategy.openSlots === 0) {
+    return { ok: false, reason: "Your squad is already full.", minimumBid: required };
+  }
+
+  if (player.overseas && strategy.overseasCount >= room.config.maxOverseas) {
     return {
       ok: false,
       reason: `Your squad already has ${room.config.maxOverseas} overseas players.`,
@@ -77,21 +79,5 @@ export function validateBid(
 }
 
 export function squadGaps(room: Pick<RoomState, "config">, participant: Participant): string[] {
-  const players = participant.squad
-    .map((entry) => PLAYER_CATALOGUE.find((player) => player.id === entry.playerId))
-    .filter(Boolean);
-  const counts = {
-    BAT: players.filter((player) => player?.role === "BAT").length,
-    BOWL: players.filter((player) => player?.role === "BOWL").length,
-    AR: players.filter((player) => player?.role === "AR").length,
-    WK: players.filter((player) => player?.role === "WK").length,
-  };
-  const gaps: string[] = [];
-  if (counts.BAT < 3) gaps.push(`${3 - counts.BAT} batter${3 - counts.BAT === 1 ? "" : "s"}`);
-  if (counts.BOWL < 3) gaps.push(`${3 - counts.BOWL} bowler${3 - counts.BOWL === 1 ? "" : "s"}`);
-  if (counts.AR < 1) gaps.push("1 all-rounder");
-  if (counts.WK < 1) gaps.push("1 wicketkeeper");
-  const remaining = room.config.squadSize - participant.squad.length;
-  if (remaining > 0) gaps.push(`${remaining} open squad slot${remaining === 1 ? "" : "s"}`);
-  return gaps;
+  return getSquadStrategy(participant, room.config).missingRequirements;
 }
