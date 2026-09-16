@@ -206,6 +206,17 @@ Final scores are normalized to 100:
 
 Explicit penalties cover missing role minimums, no wicketkeeper, overseas-limit violations, and incomplete squads. Ties resolve by budget efficiency, then team name, then participant ID. Every result row includes an expandable calculation breakdown.
 
+### Squad Readiness Index
+
+Published results include a 0–100 match-day readiness signal derived from team balance (45%), current form (30%), and pressure performance (25%). Composition penalties reduce the index by up to 25 points so incomplete squads remain comparable without overwhelming the core signal.
+
+| Index | Readiness band |
+|---|---|
+| 75–100 | Match ready |
+| 55–74 | Competitive |
+| 30–54 | Developing |
+| 0–29 | Rebuild |
+
 ## Player catalogue
 
 The catalogue snapshot was reviewed on **2026-09-14**. Names, countries, and broad playing roles were curated from:
@@ -241,6 +252,7 @@ Vitest covers:
 - budget, squad, and overseas checks,
 - deterministic scoring and tie handling,
 - weight normalization and explicit penalties,
+- squad readiness weighting, penalty caps, and readiness bands,
 - serialized competing bids,
 - self-outbid rejection,
 - idempotent sale finalization.
