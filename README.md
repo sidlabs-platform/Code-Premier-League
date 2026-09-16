@@ -60,10 +60,17 @@ Auto-play uses four automated teams and deterministic, budget-aware bids. It is 
 read-only companion displays. It intentionally omits credentials, participant
 IDs, bid history, quiz answers, scoring breakdowns, idempotency records, and all
 other internal room state. Responses always include `Cache-Control: no-store`.
-The ordered `teams` list sorts by `teamName`, then `displayName`, using the
-English locale. `version` increases when room state changes and can be used to
-skip unchanged renders. Reading the feed shares the normal room-snapshot timer
-tick, so an expired active auction may be finalized during a request.
+The endpoint is read-only and may be fetched by a browser scoreboard on another
+origin (`Access-Control-Allow-Origin: *`). The ordered `teams` list follows the
+broadcast standings convention: larger squads first, then higher remaining
+balance, then `teamName` and `displayName` as deterministic English-locale
+tiebreakers. `version` increases when room state changes and can be used to skip
+unchanged renders. `serverTime` and `currentAuction.endsAt` are Unix
+milliseconds from the same server clock, so a consumer can compute
+`Math.max(0, endsAt - serverTime)`. Reading the feed shares the normal
+room-snapshot timer tick, so an expired active auction may be finalized during a
+request. The auction `player.id` is a public catalogue identifier, not a
+participant or credential identifier.
 
 ```ts
 type PublicRoomFeedResponse =
@@ -155,16 +162,16 @@ active-auction response is:
     },
     "teams": [
       {
-        "displayName": "Ada",
-        "teamName": "Alpha XI",
-        "squadSize": 0,
-        "balance": 5000
-      },
-      {
         "displayName": "Zara",
         "teamName": "Zulu XI",
         "squadSize": 1,
         "balance": 4700
+      },
+      {
+        "displayName": "Ada",
+        "teamName": "Alpha XI",
+        "squadSize": 0,
+        "balance": 5000
       }
     ],
     "latestEvent": {

@@ -1,8 +1,15 @@
-import { describe, expect, it } from "vitest";
-import { GET } from "@/app/api/rooms/[roomCode]/public-feed/route";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  GET,
+  OPTIONS,
+} from "@/app/api/rooms/[roomCode]/public-feed/route";
 import { roomStore } from "@/lib/store";
 
 describe("GET /api/rooms/[roomCode]/public-feed", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("returns a projected no-store feed for an existing room", async () => {
     const created = await roomStore.createRoom({
       name: `Public Feed ${Date.now()}`,
@@ -20,7 +27,9 @@ describe("GET /api/rooms/[roomCode]/public-feed", () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get("cache-control")).toBe("no-store");
-    await expect(response.json()).resolves.toMatchObject({
+    expect(response.headers.get("access-control-allow-origin")).toBe("*");
+    const body = await response.json();
+    expect(body).toMatchObject({
       ok: true,
       feed: {
         code: roomCode,
@@ -30,6 +39,45 @@ describe("GET /api/rooms/[roomCode]/public-feed", () => {
         teams: [],
         results: null,
       },
+    });
+    expect(Object.keys(body)).toEqual(["ok", "feed"]);
+    expect(Object.keys(body.feed).sort()).toEqual([
+      "code",
+      "currentAuction",
+      "latestEvent",
+      "name",
+      "phase",
+      "results",
+      "serverTime",
+      "teams",
+      "version",
+    ]);
+  });
+
+  it("exposes a browser-safe preflight without exposing room data", () => {
+    const response = OPTIONS();
+
+    expect(response.status).toBe(204);
+    expect(response.headers.get("access-control-allow-origin")).toBe("*");
+    expect(response.headers.get("access-control-allow-methods")).toBe(
+      "GET, OPTIONS",
+    );
+  });
+
+  it("returns an unexpected error without leaking internal details", async () => {
+    vi.spyOn(roomStore, "getSnapshot").mockRejectedValueOnce(
+      new Error("host-token-secret"),
+    );
+
+    const response = await GET(
+      new Request("http://localhost/api/rooms/CPL123/public-feed"),
+      { params: Promise.resolve({ roomCode: "CPL123" }) },
+    );
+
+    expect(response.status).toBe(500);
+    await expect(response.json()).resolves.toEqual({
+      ok: false,
+      error: "Could not load the public room feed.",
     });
   });
 
