@@ -1,0 +1,10 @@
+{
+  "canvasId": "jira-sprint-dashboard-canvas",
+  "extensionId": "plugin:jira-sprint-dashboard-canvas:jira-sprint-dashboard-canvas",
+  "input": {
+    "cloudId": "5ac2e4c2-1cde-48d7-8f5a-3f838f8e69ed",
+    "siteUrl": "https://github-team-aosucf26.atlassian.net",
+    "projectId": "10034"
+  },
+  "notes": "Jira site: github-team-aosucf26. Project: KAN (dts, software project with sprints)."
+}
