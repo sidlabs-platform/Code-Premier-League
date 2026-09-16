@@ -162,16 +162,16 @@ active-auction response is:
     },
     "teams": [
       {
-        "displayName": "Ada",
-        "teamName": "Alpha XI",
-        "squadSize": 0,
-        "balance": 5000
-      },
-      {
         "displayName": "Zara",
         "teamName": "Zulu XI",
         "squadSize": 1,
         "balance": 4700
+      },
+      {
+        "displayName": "Ada",
+        "teamName": "Alpha XI",
+        "squadSize": 0,
+        "balance": 5000
       }
     ],
     "latestEvent": {

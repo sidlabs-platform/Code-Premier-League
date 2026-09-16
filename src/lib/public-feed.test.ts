@@ -320,6 +320,57 @@ describe("public room feed projection", () => {
     ]);
   });
 
+  it("orders equal-sized squads by balance and deterministic names", () => {
+    const [leader, other] = createSnapshot().participants;
+    const feed = projectPublicRoomFeed(
+      createSnapshot({
+        participants: [
+          {
+            ...leader,
+            displayName: "Zara",
+            teamName: "Zulu XI",
+            balance: 4_700,
+          },
+          {
+            ...other,
+            displayName: "Ada",
+            teamName: "Alpha XI",
+            balance: 4_700,
+            squad: [{ playerId: "player-03", price: 300, acquiredAt: 4 }],
+          },
+          {
+            ...leader,
+            id: "participant-third-secret",
+            displayName: "Mira",
+            teamName: "Beta XI",
+            balance: 5_000,
+          },
+        ],
+      }),
+    );
+
+    expect(feed.teams).toEqual([
+      {
+        displayName: "Mira",
+        teamName: "Beta XI",
+        squadSize: 1,
+        balance: 5_000,
+      },
+      {
+        displayName: "Ada",
+        teamName: "Alpha XI",
+        squadSize: 1,
+        balance: 4_700,
+      },
+      {
+        displayName: "Zara",
+        teamName: "Zulu XI",
+        squadSize: 1,
+        balance: 4_700,
+      },
+    ]);
+  });
+
   it("keeps unpublished results hidden and publishes only compact ranked rows", () => {
     expect(projectPublicRoomFeed(createSnapshot()).results).toBeNull();
 
