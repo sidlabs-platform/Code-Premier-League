@@ -25,7 +25,7 @@ export type ReadinessInsight = {
  * Developing >= 30, and Rebuild below 30.
  */
 export function readinessBandFor(score: number): ReadinessBand {
-  if (score > 75) {
+  if (score >= 75) {
     return "Match ready";
   }
   if (score >= 55) {

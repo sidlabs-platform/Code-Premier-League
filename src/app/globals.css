@@ -2704,6 +2704,20 @@ p {
   .broadcast-leaders {
     min-height: auto;
   }
+
+  .readiness-signal {
+    grid-template-columns: 1fr;
+  }
+
+  .readiness-score {
+    border-bottom: 1px solid var(--line);
+    border-right: 0;
+    padding: 0 0 1rem;
+  }
+
+  .readiness-signal dl {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 760px) {
@@ -3051,20 +3065,6 @@ p {
   .score-explanation,
   .score-metrics {
     grid-template-columns: 1fr;
-  }
-
-  .readiness-signal {
-    grid-template-columns: 1fr;
-  }
-
-  .readiness-score {
-    border-bottom: 1px solid var(--line);
-    border-right: 0;
-    padding: 0 0 1rem;
-  }
-
-  .readiness-signal dl {
-    grid-template-columns: 1fr 1fr;
   }
 
   .results-hero {
