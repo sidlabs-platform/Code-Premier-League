@@ -6,5 +6,5 @@
     "siteUrl": "https://github-team-aosucf26.atlassian.net",
     "projectId": "10034"
   },
-  "notes": "Jira site: github-team-aosucf26. Project: KAN (dts, software project with sprints)."
+  "notes": "Jira site: github-team-aosucf26. Project: KAN (dts, software project with sprints). This file is the source of truth for one-click canvas opens: the canvas reads it directly when opened with empty input. See AGENTS.md; if one-click opening breaks after a plugin update, re-run scripts/patch-jira-canvas.mjs."
 }
