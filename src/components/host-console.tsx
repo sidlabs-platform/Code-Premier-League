@@ -359,7 +359,7 @@ export function HostConsole({ roomCode }: { roomCode: string }) {
                   Publish leaderboard
                 </Button>
               )}
-              {snapshot.resultsPublished && (
+              {snapshot.phase === "results" && snapshot.resultsPublished && (
                 <Link
                   href={`/results/${roomCode}`}
                   className="button button-primary"
