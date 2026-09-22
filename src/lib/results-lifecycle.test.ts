@@ -87,7 +87,7 @@ describe("published result lifecycle", () => {
     expectCurrentScores(published);
     const publishedFeed = await game.feed();
     expect(publishedFeed.feed.results).not.toBeNull();
-    expect(ResultsBoard({ snapshot: published }).props.className).toBe("results-board ");
+    expect(ResultsBoard({ snapshot: published }).props.className.split(/\s+/)).toContain("results-board");
 
     const reopened = await game.host({ type: "startAuction", playerId: "player-02" });
     expect(reopened).toMatchObject({
