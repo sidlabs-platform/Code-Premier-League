@@ -2262,7 +2262,7 @@ p {
 }
 
 .live-ticker-list {
-  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
 }
 
 .live-ticker-list li,

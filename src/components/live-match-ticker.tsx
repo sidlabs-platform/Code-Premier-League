@@ -19,8 +19,8 @@ export function LiveMatchTicker({ events }: { events: readonly ActivityEvent[] }
         <h2 id="live-ticker-title">Live auction ticker</h2>
         <span>On air · {latestEvents.length} updates</span>
       </div>
-      <ol
-        className="live-ticker-list"
+      <ul
+        className="live-ticker-grid"
         role="log"
         aria-atomic="false"
         aria-relevant="additions"
@@ -31,8 +31,14 @@ export function LiveMatchTicker({ events }: { events: readonly ActivityEvent[] }
               <time dateTime={new Date(event.createdAt).toISOString()}>
                 {tickerTime.format(event.createdAt)} UTC
               </time>
-              <span>{index === 0 ? "Latest" : event.type}</span>
+              <span>
+                {event.type}
+                {index === 0 ? " · Latest" : ""}
+              </span>
               <p>{event.message}</p>
+              <time dateTime={new Date(event.createdAt).toISOString()}>
+                {event.type.toUpperCase()} · {tickerTime.format(event.createdAt)} UTC
+              </time>
             </li>
           ))
         ) : (
@@ -40,7 +46,7 @@ export function LiveMatchTicker({ events }: { events: readonly ActivityEvent[] }
             <p>Waiting for the first room signal.</p>
           </li>
         )}
-      </ol>
+      </ul>
     </section>
   );
 }
