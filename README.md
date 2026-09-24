@@ -123,8 +123,17 @@ type PublicRoomFeedResponse =
   | { ok: false; error: string };
 ```
 
-`results` is `null` until the host publishes the leaderboard. A representative
-active-auction response is:
+`results` is non-null only while `phase` is `"results"` and the host has
+published the leaderboard. Reopening an auction or quiz clears the previous
+scores and returns `results: null`; ending the auction returns to `"results"`
+with scores withheld until the host publishes again. Publishing directly during
+an active or paused player auction first settles that auction, so the final
+scores include the winning sale exactly once. Companion displays should require
+both `phase === "results"` and non-null `results` before showing a final
+scorecard, including when reading older producers that may retain stale rows
+after reopening play. No response fields or scoring rules change.
+
+A representative active-auction response is:
 
 ```json
 {

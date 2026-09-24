@@ -22,7 +22,7 @@ export function ResultsBoard({
   snapshot: RoomSnapshot;
   broadcast?: boolean;
 }) {
-  if (!snapshot.resultsPublished) {
+  if (snapshot.phase !== "results" || !snapshot.resultsPublished) {
     return (
       <div className="results-waiting">
         <Gauge size={36} aria-hidden="true" />
