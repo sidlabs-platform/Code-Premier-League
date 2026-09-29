@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import {
+  publicFeedCorsHeaders,
   projectPublicRoomFeed,
   type PublicRoomFeedResponse,
 } from "@/lib/public-feed";
@@ -7,6 +8,13 @@ import { DomainError, roomStore } from "@/lib/store";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+export function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: publicFeedCorsHeaders,
+  });
+}
 
 export async function GET(
   _request: Request,
@@ -19,9 +27,7 @@ export async function GET(
       ok: true,
       feed: projectPublicRoomFeed(snapshot),
     };
-    return NextResponse.json(response, {
-      headers: { "Cache-Control": "no-store" },
-    });
+    return NextResponse.json(response, { headers: publicFeedCorsHeaders });
   } catch (error) {
     const status = error instanceof DomainError ? error.status : 500;
     const message =
@@ -31,7 +37,7 @@ export async function GET(
     const response: PublicRoomFeedResponse = { ok: false, error: message };
     return NextResponse.json(response, {
       status,
-      headers: { "Cache-Control": "no-store" },
+      headers: publicFeedCorsHeaders,
     });
   }
 }
