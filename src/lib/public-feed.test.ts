@@ -286,7 +286,7 @@ describe("public room feed projection", () => {
     expect(projectPublicRoomFeed(createSnapshot()).results).toBeNull();
 
     const feed = projectPublicRoomFeed(
-      createSnapshot({ resultsPublished: true }),
+      createSnapshot({ phase: "results", resultsPublished: true }),
     );
 
     expect(feed.results).toEqual([
@@ -304,6 +304,17 @@ describe("public room feed projection", () => {
       },
     ]);
   });
+
+  it.each(["waiting", "quiz", "auction"] as const)(
+    "withholds legacy published rows during the %s phase",
+    (phase) => {
+      expect(
+        projectPublicRoomFeed(
+          createSnapshot({ phase, resultsPublished: true }),
+        ).results,
+      ).toBeNull();
+    },
+  );
 
   it("uses null for auctions without a public player or resolvable leader", () => {
     const noBid = projectPublicRoomFeed(

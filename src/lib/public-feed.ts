@@ -137,7 +137,7 @@ export function projectPublicRoomFeed(snapshot: RoomSnapshot): PublicRoomFeed {
           createdAt: latestEvent.createdAt,
         }
       : null,
-    results: snapshot.resultsPublished
+    results: snapshot.phase === "results" && snapshot.resultsPublished
       ? [...snapshot.results]
           .sort(
             (left, right) =>

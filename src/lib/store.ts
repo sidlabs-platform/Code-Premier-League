@@ -443,6 +443,10 @@ class RoomStore {
       }
 
       const credentials = this.applyValidatedAction(room, action, now);
+      if (room.phase !== "results") {
+        room.results = [];
+        room.resultsPublished = false;
+      }
       this.bump(room, now);
       const response: ActionResponse = {
         ok: true,
@@ -688,19 +692,21 @@ class RoomStore {
         this.finalizeAuction(room, true, now);
         break;
       case "endAuction":
+      case "publishResults":
         if (room.auction && ["active", "paused"].includes(room.auction.state)) {
           this.finalizeAuction(room, false, now);
         }
         room.results = rankParticipants(Object.values(room.participants), room.config);
         room.phase = "results";
-        room.resultsPublished = false;
-        addEvent(room, "results", "Auction closed. Scores are ready for review.", now);
-        break;
-      case "publishResults":
-        room.results = rankParticipants(Object.values(room.participants), room.config);
-        room.phase = "results";
-        room.resultsPublished = true;
-        addEvent(room, "results", "Final leaderboard published.", now);
+        room.resultsPublished = action.type === "publishResults";
+        addEvent(
+          room,
+          "results",
+          room.resultsPublished
+            ? "Final leaderboard published."
+            : "Auction closed. Scores are ready for review.",
+          now,
+        );
         break;
       case "resetRoom":
         room.phase = "waiting";
