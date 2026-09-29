@@ -1,0 +1,38 @@
+name: Dependency Review
+
+on:
+  # Deliberately unfiltered by base branch — see #1246 and the note in
+  # build.yml. A new dependency is worth reviewing wherever it is going to land.
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    # ⚠️ Job name is a required status check in the 'main' branch ruleset.
+    # Renaming it will break branch protection — update the ruleset if changed.
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          # Fail on any newly introduced vulnerability
+          fail-on-severity: low
+          # Check all dependency scopes (runtime, dev, unknown)
+          fail-on-scopes: runtime, development, unknown
+          # Also flag packages with known vulnerabilities
+          vulnerability-check: true
+          # Comment on the PR with findings
+          comment-summary-in-pr: always
+          # Deny copyleft licenses that are incompatible with proprietary code
+          deny-licenses: GPL-2.0-only, GPL-3.0-only, AGPL-3.0-only
