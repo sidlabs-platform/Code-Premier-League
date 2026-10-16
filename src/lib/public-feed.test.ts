@@ -25,6 +25,7 @@ function createSnapshot(
       quizEnabled: true,
       squadSize: 11,
       maxOverseas: 4,
+      startingBudget: 5_000,
     },
     participants: [
       {

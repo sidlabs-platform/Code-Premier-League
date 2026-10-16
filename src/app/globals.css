@@ -749,6 +749,39 @@ p {
   grid-template-columns: 1fr 1fr;
 }
 
+.preset-row {
+  background: var(--ink-2);
+  border: 1px solid var(--line);
+  margin-bottom: 1rem;
+  padding: 0.9rem;
+}
+
+.preset-row label {
+  margin-bottom: 0.7rem;
+}
+
+.preset-row input {
+  background: var(--paper-2);
+  border: 2px solid transparent;
+  border-radius: 3px;
+  color: var(--ink);
+  min-height: 48px;
+  padding: 0.7rem 0.8rem;
+  width: 100%;
+}
+
+.preset-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.preset-notice {
+  color: var(--muted);
+  font-size: 0.76rem;
+  margin: 0.7rem 0 0;
+}
+
 .toggle-label {
   align-items: center;
   background: var(--ink-2);

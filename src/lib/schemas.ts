@@ -7,6 +7,9 @@ export const createRoomSchema = z.object({
   bidIncrement: z.number().int().min(25).max(500),
   timerSeconds: z.number().int().min(5).max(45),
   quizEnabled: z.boolean(),
+  squadSize: z.number().int().min(5).max(15).optional(),
+  maxOverseas: z.number().int().min(0).max(8).optional(),
+  startingBudget: z.number().int().min(1000).max(20000).optional(),
 });
 
 export const featureVoteSchema = z.object({

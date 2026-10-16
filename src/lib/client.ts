@@ -29,6 +29,9 @@ export async function createRoom(input: {
   bidIncrement: number;
   timerSeconds: number;
   quizEnabled: boolean;
+  squadSize?: number;
+  maxOverseas?: number;
+  startingBudget?: number;
 }): Promise<ApiResponse> {
   const response = await fetch("/api/rooms", {
     method: "POST",
