@@ -39,6 +39,7 @@ export type RoomConfig = {
   quizEnabled: boolean;
   squadSize: number;
   maxOverseas: number;
+  startingBudget: number;
 };
 
 export type SquadPlayer = {

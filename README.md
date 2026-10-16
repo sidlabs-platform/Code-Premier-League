@@ -31,13 +31,14 @@ npm run test:e2e
 ## Host runbook
 
 1. From `/`, use **Host a room** and keep the recommended defaults, or open `/demo` for one-click auto-play.
-2. Share the six-character room code, join URL, or QR panel from `/host/[roomCode]`.
-3. Confirm teams appear in **Teams on channel**, then close registration.
-4. If quiz mode is enabled, start the five-question sprint. Reveal each answer before advancing.
-5. Select a player and start the auction. Valid bids reset the server-owned countdown.
-6. Pause, resume, force-close, or mark a player unsold when needed.
-7. End the auction, review scores, and publish the leaderboard.
-8. Screen-share `/spectate/[roomCode]` for a clean read-only broadcast, or `/results/[roomCode]` for the final table.
+2. Tune squad size, team budget, overseas limit, and quiz mode before creating the room. Name the configuration and choose **Save format** to reuse it for recurring events — saved formats are stored in the host browser and reloaded from the **Saved format** picker.
+3. Share the six-character room code, join URL, or QR panel from `/host/[roomCode]`.
+4. Confirm teams appear in **Teams on channel**, then close registration.
+5. If quiz mode is enabled, start the five-question sprint. Reveal each answer before advancing.
+6. Select a player and start the auction. Valid bids reset the server-owned countdown.
+7. Pause, resume, force-close, or mark a player unsold when needed.
+8. End the auction, review scores, and publish the leaderboard.
+9. Screen-share `/spectate/[roomCode]` for a clean read-only broadcast, or `/results/[roomCode]` for the final table.
 
 Auto-play uses four automated teams and deterministic, budget-aware bids. It is always labeled **Auto-play** and automatically pauses when a live participant joins.
 

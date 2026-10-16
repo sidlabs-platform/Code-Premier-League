@@ -31,7 +31,7 @@ The host can share the console or spectator view while participants use personal
 - The application must state that it is unofficial, educational, not endorsed, and intends no copyright or trademark infringement.
 - No real-money flows, betting, wallets, or payments.
 - DevCoins are stored as integers in the smallest display unit.
-- Default rules: 50 DevCrore starting balance, 15 DevCrore quiz bonus cap, squad size 11, and maximum four overseas players.
+- Default rules: 50 DevCrore starting balance, 15 DevCrore quiz bonus cap, squad size 11, and maximum four overseas players. Hosts may override squad size, team budget, overseas limit, and quiz mode per room, and save those settings as a named format in their own browser for recurring events.
 - The MVP prioritizes deterministic behavior and recoverability over production durability.
 - Realtime cloud persistence is an optional extension; the default implementation is authoritative within one running application process.
 

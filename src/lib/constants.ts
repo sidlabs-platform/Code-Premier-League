@@ -11,6 +11,7 @@ export const DEFAULT_ROOM_CONFIG: RoomConfig = {
   quizEnabled: true,
   squadSize: 11,
   maxOverseas: 4,
+  startingBudget: STARTING_BALANCE,
 };
 
 export const REQUIRED_ROLE_COUNTS = {

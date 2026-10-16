@@ -10,7 +10,6 @@ import {
   DEFAULT_ROOM_CONFIG,
   QUIZ_BONUS_CAP,
   ROOM_CODE_ALPHABET,
-  STARTING_BALANCE,
 } from "@/lib/constants";
 import { pickSeeded, seededValue } from "@/lib/random";
 import { validateBid } from "@/lib/rules";
@@ -111,7 +110,10 @@ class RoomStore {
     try {
       const parsed = JSON.parse(readFileSync(DATA_FILE, "utf8")) as RoomState[];
       for (const room of parsed) {
-        this.rooms.set(room.code, room);
+        this.rooms.set(room.code, {
+          ...room,
+          config: { ...DEFAULT_ROOM_CONFIG, ...room.config },
+        });
       }
     } catch (error) {
       console.error("CPL could not load local room persistence.", error);
@@ -356,6 +358,11 @@ class RoomStore {
         bidIncrement: input.bidIncrement,
         timerSeconds: input.timerSeconds,
         quizEnabled: input.quizEnabled,
+        ...(input.squadSize === undefined ? {} : { squadSize: input.squadSize }),
+        ...(input.maxOverseas === undefined ? {} : { maxOverseas: input.maxOverseas }),
+        ...(input.startingBudget === undefined
+          ? {}
+          : { startingBudget: input.startingBudget }),
       },
       participants: {},
       auction: null,
@@ -402,9 +409,9 @@ class RoomStore {
           lastSeenAt: now,
           isBot: true,
           connected: true,
-          startingBalance: STARTING_BALANCE,
+          startingBalance: room.config.startingBudget,
           quizBonus: 0,
-          balance: STARTING_BALANCE,
+          balance: room.config.startingBudget,
           squad: [],
         };
       }
@@ -489,9 +496,9 @@ class RoomStore {
         lastSeenAt: now,
         isBot: false,
         connected: true,
-        startingBalance: STARTING_BALANCE,
+        startingBalance: room.config.startingBudget,
         quizBonus: 0,
-        balance: STARTING_BALANCE,
+        balance: room.config.startingBudget,
         squad: [],
       };
       room.participants[participantId] = participant;
